@@ -7,6 +7,7 @@ import java.util.List;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
 
 
 
@@ -14,7 +15,7 @@ public class MediaUtil {
 	
 	public static List<MusicInfo> getMusicInfos(Context context){
 		Cursor cursor = context.getContentResolver().query(
-				MediaStore.Audio.Media.INTERNAL_CONTENT_URI, null, null, null,
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null,
 				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		List<MusicInfo> musicInfos = new ArrayList<MusicInfo>();
 		while(cursor.moveToNext()){
@@ -41,6 +42,7 @@ public class MediaUtil {
 			if (isMusic != 0) { // 只把音乐添加到集合当中
 				musicInfo.setId(id);
 				musicInfo.setTitle(title);
+				Log.i("title",title+"");
 				musicInfo.setArtist(artist);
 				musicInfo.setAlbum(album);
 				musicInfo.setDisplayName(displayName);

@@ -131,6 +131,7 @@
    			android:layout_height="32dp"
    			android:layout_marginLeft="5dp"
    			android:layout_marginRight="5dp"
+   			android:layout_centerVertical="true"
    			android:layout_alignParentLeft="true"
    			android:background="@drawable/previous"
    			android:contentDescription="@string/description">	

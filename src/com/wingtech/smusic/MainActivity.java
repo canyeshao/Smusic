@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.i("init","aaaa");
         idInit();
         listInit();
  
@@ -60,16 +61,18 @@ public class MainActivity extends Activity {
     	
     };
     public void listInit() {
-    	 Log.e("Tag","aaaa");
+    	 Log.i("list","in init");
     	 musicInfos=MediaUtil.getMusicInfos(MainActivity.this);
-    	 Log.e("Tag","bbbb");
-         MediaUtil.getMusicMaps(musicInfos);
-         Log.e("Tag","cccc");
+    	 Log.i("list","get musicInfos ");
+    	 hashMapMusicInfos= MediaUtil.getMusicMaps(musicInfos);
+         Log.i("list","get hashMapMusicInfos");
     	 simAdapter = new SimpleAdapter(this, hashMapMusicInfos,
     	 R.layout.music_list_item_layout, new String[] {"title",
     	 "Artist", "duration" }, new int[] {R.id.music_title,
     	 R.id.music_Artist, R.id.music_duration });
+    	 Log.i("list","get simAdapter ");
     	 listview_music.setAdapter(simAdapter);
+    	 Log.i("list","get listview_music"); 
     }
     
 }
