@@ -3,6 +3,7 @@ package com.wingtech.smusic;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -47,6 +48,7 @@ public class Music_ControlActivity extends Activity implements OnClickListener  
 		// TODO Auto-generated method stub
 		switch(v.getId()){
 		case R.id.ibtn_control_back:
+			Log.i("music_control","ibtn_control_back   onclick");
 			Intent intent1=new Intent(Music_ControlActivity.this,MainActivity.class);
 			startActivity(intent1);
 			break;
