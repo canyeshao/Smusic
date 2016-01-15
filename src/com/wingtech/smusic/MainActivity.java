@@ -5,15 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.wingtech.music.MediaUtil;
+import com.wingtech.music.MusicInfo;
 
 public class MainActivity extends Activity {
 	private TextView textview_username;
@@ -32,11 +39,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_control);
-        Log.i("init","aaaa");
-       // idInit();
-        //listInit();
- 
+        setContentView(R.layout.activity_main);
+        Log.i("init","go init");
+        Init();
     }
 
 
@@ -47,7 +52,7 @@ public class MainActivity extends Activity {
         return true;
     }
     
-    protected void idInit(){
+    protected void Init(){
     	
     	textview_username=(TextView)findViewById(R.id.textview_username);
     	textview_musicname=(TextView)findViewById(R.id.textview_musicname);
@@ -58,9 +63,26 @@ public class MainActivity extends Activity {
     	btn_next=(ImageButton)findViewById(R.id.btn_next);
     	img_user=(ImageView)findViewById(R.id.img_userhead);
     	listview_music=(ListView)findViewById(R.id.listview_music);
-    	
+    	listInit();
+    	buttoniInit();
     };
-    public void listInit() {
+    
+    
+    private void buttoniInit() {
+		
+    	btn_music.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent intent=new Intent(MainActivity.this,Music_ControlActivity.class);
+				startActivity(intent);
+			}
+		});
+    		
+    }
+
+	public void listInit() {
     	 Log.i("list","in init");
     	 musicInfos=MediaUtil.getMusicInfos(MainActivity.this);
     	 Log.i("list","get musicInfos ");
@@ -73,6 +95,18 @@ public class MainActivity extends Activity {
     	 Log.i("list","get simAdapter ");
     	 listview_music.setAdapter(simAdapter);
     	 Log.i("list","get listview_music"); 
+    	 listview_music.setOnItemClickListener(new OnItemClickListener() {
+    	 @Override
+    	 	public void onItemClick(AdapterView<?> parent, View view, int position,
+    			long id) {
+    		// TODO Auto-generated method stub
+    		 HashMap<String, Object> map=(HashMap<String, Object>)listview_music.getItemAtPosition(position);
+    		 textview_musicname.setText(map.get("title").toString());
+    		 textview_musicnote.setText(map.get("Artist").toString());
+    	 	} 
+		  });
+    	  Log.i("list","get setOnItemClickListener()");
+    	
     }
     
 }

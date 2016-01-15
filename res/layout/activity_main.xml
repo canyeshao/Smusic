@@ -27,26 +27,26 @@
 		     android:layout_width="200dp"
 		     android:layout_height="50dp"
 		     android:layout_alignParentRight="true">
-		     
-		     <TextView
-		         android:id="@+id/textview_username"
-		         android:layout_width="80dp"
-		         android:layout_height="match_parent"
-		         android:layout_alignParentRight="true"
-		         android:layout_marginLeft="130dp"
-		         android:layout_marginTop="2dp"
-		         android:text="@string/username"
-		         android:contentDescription="@string/description"
-		         android:textColor="#000000"
-		         android:textSize="18sp" />
-
 		     <ImageView
 		         android:id="@+id/img_userhead"
 		         android:layout_width="50dp"
 		         android:layout_height="50dp"
 		         android:layout_centerInParent="true"
+		          android:layout_alignParentRight="true"
 		         android:contentDescription="@string/description"
 		         android:src="@drawable/head" />
+		     
+		     <TextView
+		         android:id="@+id/textview_username"
+		         android:layout_width="80dp"
+		         android:layout_height="match_parent"
+				 android:layout_toStartOf="@id/img_userhead"
+		         android:layout_marginTop="2dp"
+		         android:gravity="right"
+		         android:text="@string/username"
+		         android:contentDescription="@string/description"
+		         android:textColor="#000000"
+		         android:textSize="18sp" />
 
 		 </RelativeLayout>
 
@@ -82,6 +82,7 @@
    			android:layout_height="60dp"
    			android:contentDescription="@string/description"
    			android:src="@drawable/music"
+   			android:background="#ffffff"
    			android:layout_alignParentLeft="true"
    			/>
     
