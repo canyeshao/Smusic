@@ -30,6 +30,8 @@
             android:label="@string/music_control" >
         </activity>
         
+        <service android:name="com.wingtech.MusicPlayer">
+        </service>
     </application>
 
 </manifest>

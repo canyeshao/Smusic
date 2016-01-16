@@ -19,22 +19,24 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.wingtech.music.MediaUtil;
-import com.wingtech.music.MusicInfo;
+import com.wingtech.musicplayer.MusicPlayer;
+import com.wingtech.musicsource.MediaUtil;
+import com.wingtech.musicsource.MusicInfo;
 
 public class MainActivity extends Activity {
-	private TextView textview_username;
-	private TextView textview_musicname;
-	private TextView textview_musicnote;
-	private ImageButton btn_music;
-	private ImageButton btn_previous;
-	private ImageButton btn_switch;
-	private ImageButton btn_next;
-	private List<MusicInfo> musicInfos = new ArrayList<MusicInfo>();
-	private List<HashMap<String, Object>> hashMapMusicInfos= new ArrayList<HashMap<String, Object>>(); ;
-	private SimpleAdapter simAdapter;
-	private ImageView img_user;
-	private ListView listview_music;
+	private TextView mtextview_username;
+	private TextView mtextview_musicname;
+	private TextView mtextview_musicnote;
+	private ImageButton mbtn_music_photo;
+	private ImageButton mbtn_previous;
+	private ImageButton mbtn_switch;
+	private ImageButton mbtn_next;
+	private ImageView mimg_user;
+	private List<MusicInfo> mmusicInfos = new ArrayList<MusicInfo>();
+	private List<HashMap<String, Object>> mhashMapMusicInfos= new ArrayList<HashMap<String, Object>>(); ;
+	private SimpleAdapter msimAdapter;
+	private ListView mlistview_music;
+	private Bundle mBundle=new Bundle();
 	//private String[] data={"1","2","3","4","5","6","7","8","9","10"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +56,15 @@ public class MainActivity extends Activity {
     
     protected void Init(){
     	
-    	textview_username=(TextView)findViewById(R.id.textview_username);
-    	textview_musicname=(TextView)findViewById(R.id.textview_musicname);
-    	textview_musicnote=(TextView)findViewById(R.id.textview_musicnote);
-    	btn_music=(ImageButton)findViewById(R.id.btn_music);
-    	btn_previous=(ImageButton)findViewById(R.id.btn_previous);
-    	btn_switch=(ImageButton)findViewById(R.id.btn_switch);
-    	btn_next=(ImageButton)findViewById(R.id.btn_next);
-    	img_user=(ImageView)findViewById(R.id.img_userhead);
-    	listview_music=(ListView)findViewById(R.id.listview_music);
+    	mtextview_username=(TextView)findViewById(R.id.textview_username);
+    	mtextview_musicname=(TextView)findViewById(R.id.textview_musicname);
+    	mtextview_musicnote=(TextView)findViewById(R.id.textview_musicnote);
+    	mbtn_music_photo=(ImageButton)findViewById(R.id.btn_music_photo);
+    	mbtn_previous=(ImageButton)findViewById(R.id.btn_previous);
+    	mbtn_switch=(ImageButton)findViewById(R.id.btn_switch);
+    	mbtn_next=(ImageButton)findViewById(R.id.btn_next);
+    	mimg_user=(ImageView)findViewById(R.id.img_userhead);
+    	mlistview_music=(ListView)findViewById(R.id.listview_music);
     	listInit();
     	buttoniInit();
     };
@@ -70,13 +72,14 @@ public class MainActivity extends Activity {
     
     private void buttoniInit() {
 		
-    	btn_music.setOnClickListener(new OnClickListener() {
+    	mbtn_music_photo.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				Intent intent=new Intent(MainActivity.this,Music_ControlActivity.class);
-				startActivity(intent);
+				Intent mmusic_control_intent=new Intent(MainActivity.this,Music_ControlActivity.class);
+				mmusic_control_intent.putExtras(mBundle);
+				startActivity(mmusic_control_intent);
 			}
 		});
     		
@@ -84,28 +87,33 @@ public class MainActivity extends Activity {
 
 	public void listInit() {
     	 Log.i("list","in init");
-    	 musicInfos=MediaUtil.getMusicInfos(MainActivity.this);
+    	 mmusicInfos=MediaUtil.getMusicInfos(MainActivity.this);
     	 Log.i("list","get musicInfos ");
-    	 hashMapMusicInfos= MediaUtil.getMusicMaps(musicInfos);
+    	 mhashMapMusicInfos= MediaUtil.getMusicMaps(mmusicInfos);
          Log.i("list","get hashMapMusicInfos");
-    	 simAdapter = new SimpleAdapter(this, hashMapMusicInfos,
+    	 msimAdapter = new SimpleAdapter(this, mhashMapMusicInfos,
     	 R.layout.music_list_item_layout, new String[] {"title",
     	 "Artist", "duration" }, new int[] {R.id.music_title,
     	 R.id.music_Artist, R.id.music_duration });
     	 Log.i("list","get simAdapter ");
-    	 listview_music.setAdapter(simAdapter);
+    	 mlistview_music.setAdapter(msimAdapter);
     	 Log.i("list","get listview_music"); 
-    	 listview_music.setOnItemClickListener(new OnItemClickListener() {
+    	 mlistview_music.setOnItemClickListener(new OnItemClickListener() {
     	 @Override
     	 	public void onItemClick(AdapterView<?> parent, View view, int position,
     			long id) {
     		// TODO Auto-generated method stub
-    		 HashMap<String, Object> map=(HashMap<String, Object>)listview_music.getItemAtPosition(position);
-    		 textview_musicname.setText(map.get("title").toString());
-    		 textview_musicnote.setText(map.get("Artist").toString());
+    		 HashMap<String, Object> map=(HashMap<String, Object>)mlistview_music.getItemAtPosition(position);
+    		 mtextview_musicname.setText(map.get("title").toString());
+    		 mtextview_musicnote.setText(map.get("Artist").toString());
+    		 mBundle.putSerializable("map", map);
+    		 Intent mstart_service_intent=new Intent(MainActivity.this,MusicPlayer.class);
+    		 mstart_service_intent.putExtras(mBundle);
+    		 mstart_service_intent.putExtra("position", position);
+    		 startService(mstart_service_intent);
     	 	} 
 		  });
-    	  Log.i("list","get setOnItemClickListener()");
+    	  Log.i("list","setOnItemClickListener()");
     	
     }
     

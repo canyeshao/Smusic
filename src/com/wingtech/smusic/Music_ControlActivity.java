@@ -10,15 +10,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class Music_ControlActivity extends Activity implements OnClickListener  {
-	private ImageButton ibtn_control_back;
-	private TextView textview_songname;
-	private TextView textview_songlyric;
-	private TextView textview_songartist;
-	private ImageButton ibtn_control_love;
-	private ImageButton ibtn_control_switch;
-	private ImageButton ibtn_control_previous;
-	private ImageButton ibtn_control_next;
-	private ImageButton ibtn_control_list;
+	private ImageButton mibtn_control_back;
+	private TextView mtextview_songname;
+	private TextView mtextview_songlyric;
+	private TextView mtextview_songartist;
+	private ImageButton mibtn_control_love;
+	private ImageButton mibtn_control_switch;
+	private ImageButton mibtn_control_previous;
+	private ImageButton mibtn_control_next;
+	private ImageButton mibtn_control_list;
 	
 	
 	@Override
@@ -31,15 +31,17 @@ public class Music_ControlActivity extends Activity implements OnClickListener  
 	
 	private void init(){
 		
-		ibtn_control_back=(ImageButton)findViewById(R.id.ibtn_control_back);
-		textview_songname=(TextView)findViewById(R.id.textview_songname);
-		textview_songlyric=(TextView)findViewById(R.id.textview_songlyric);
-		textview_songartist=(TextView)findViewById(R.id.textview_songartist);
-		ibtn_control_love=(ImageButton)findViewById(R.id.ibtn_control_love);
-		ibtn_control_switch=(ImageButton)findViewById(R.id.ibtn_control_switch);
-		ibtn_control_previous=(ImageButton)findViewById(R.id.ibtn_control_previous);
-		ibtn_control_next=(ImageButton)findViewById(R.id.ibtn_control_next);
-		ibtn_control_list=(ImageButton)findViewById(R.id.ibtn_control_list);
+		mibtn_control_back=(ImageButton)findViewById(R.id.ibtn_control_back);
+		mtextview_songname=(TextView)findViewById(R.id.textview_songname);
+		mtextview_songlyric=(TextView)findViewById(R.id.textview_songlyric);
+		mtextview_songartist=(TextView)findViewById(R.id.textview_songartist);
+		mibtn_control_love=(ImageButton)findViewById(R.id.ibtn_control_love);
+		mibtn_control_switch=(ImageButton)findViewById(R.id.ibtn_control_switch);
+		mibtn_control_previous=(ImageButton)findViewById(R.id.ibtn_control_previous);
+		mibtn_control_next=(ImageButton)findViewById(R.id.ibtn_control_next);
+		mibtn_control_list=(ImageButton)findViewById(R.id.ibtn_control_list);
+		mibtn_control_back.setOnClickListener(this);
+		mibtn_control_list.setOnClickListener(this);
 	
 	}
 
