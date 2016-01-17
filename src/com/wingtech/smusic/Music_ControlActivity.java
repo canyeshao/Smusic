@@ -50,7 +50,7 @@ public class Music_ControlActivity extends Activity implements OnClickListener  
 		// TODO Auto-generated method stub
 		switch(v.getId()){
 		case R.id.ibtn_control_back:
-			Log.i("music_control","ibtn_control_back   onclick");
+			Log.i("music_control","ibtn_control_back  onclick");
 			Intent intent1=new Intent(Music_ControlActivity.this,MainActivity.class);
 			startActivity(intent1);
 			break;

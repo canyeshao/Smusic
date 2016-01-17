@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +20,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.wingtech.musicplayer.Constant;
+import com.wingtech.musicplayer.ControlPlayerReceiver;
 import com.wingtech.musicplayer.MusicPlayer;
 import com.wingtech.musicsource.MediaUtil;
 import com.wingtech.musicsource.MusicInfo;
@@ -37,6 +40,7 @@ public class MainActivity extends Activity {
 	private SimpleAdapter msimAdapter;
 	private ListView mlistview_music;
 	private Bundle mBundle=new Bundle();
+	private ControlPlayerReceiver mPlayerReceiver=new ControlPlayerReceiver();
 	//private String[] data={"1","2","3","4","5","6","7","8","9","10"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,22 @@ public class MainActivity extends Activity {
         Log.i("init","go init");
         Init();
     }
-
+  
+    @Override
+    protected void onStart() {
+    	// TODO Auto-generated method stub
+    	super.onStart();
+    	IntentFilter intentfilter=new IntentFilter();
+    	intentfilter.addAction(Constant.ACTION_MUSIC_CONTROL);
+    	this.registerReceiver(mPlayerReceiver, intentfilter);
+    }
+    
+    @Override
+    protected void onStop() {
+    	// TODO Auto-generated method stub
+    	super.onStop();
+    	this.unregisterReceiver(mPlayerReceiver);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,11 +85,12 @@ public class MainActivity extends Activity {
     	mimg_user=(ImageView)findViewById(R.id.img_userhead);
     	mlistview_music=(ListView)findViewById(R.id.listview_music);
     	listInit();
-    	buttoniInit();
+    	buttonInit();
+    	Log.i("init","init over");
     };
+     
     
-    
-    private void buttoniInit() {
+    private void buttonInit() {
 		
     	mbtn_music_photo.setOnClickListener(new OnClickListener() {
 			
@@ -82,19 +102,22 @@ public class MainActivity extends Activity {
 				startActivity(mmusic_control_intent);
 			}
 		});
+    	
+    	
     		
     }
 
 	public void listInit() {
     	 Log.i("list","in init");
     	 mmusicInfos=MediaUtil.getMusicInfos(MainActivity.this);
-    	 Log.i("list","get musicInfos ");
     	 mhashMapMusicInfos= MediaUtil.getMusicMaps(mmusicInfos);
          Log.i("list","get hashMapMusicInfos");
+         
     	 msimAdapter = new SimpleAdapter(this, mhashMapMusicInfos,
     	 R.layout.music_list_item_layout, new String[] {"title",
     	 "Artist", "duration" }, new int[] {R.id.music_title,
     	 R.id.music_Artist, R.id.music_duration });
+    	 
     	 Log.i("list","get simAdapter ");
     	 mlistview_music.setAdapter(msimAdapter);
     	 Log.i("list","get listview_music"); 
@@ -106,15 +129,15 @@ public class MainActivity extends Activity {
     		 HashMap<String, Object> map=(HashMap<String, Object>)mlistview_music.getItemAtPosition(position);
     		 mtextview_musicname.setText(map.get("title").toString());
     		 mtextview_musicnote.setText(map.get("Artist").toString());
-    		 mBundle.putSerializable("map", map);
+    		//mBundle.putSerializable("map", map);
     		 Intent mstart_service_intent=new Intent(MainActivity.this,MusicPlayer.class);
-    		 mstart_service_intent.putExtras(mBundle);
+    		// mstart_service_intent.putExtras(mBundle);
     		 mstart_service_intent.putExtra("position", position);
+    		 Log.i("list position",position+"");
     		 startService(mstart_service_intent);
+    		 Log.i("list","setOnItemClickListener()");
     	 	} 
 		  });
-    	  Log.i("list","setOnItemClickListener()");
-    	
     }
     
 }

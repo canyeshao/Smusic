@@ -54,7 +54,7 @@ public class MediaUtil {
 				
 				musicInfo.setId(id);
 				musicInfo.setTitle(title);
-				Log.i("title",title+"");
+				//Log.i("title",title+"");
 				musicInfo.setArtist(artist);
 				musicInfo.setAlbum(album);
 				musicInfo.setDisplayName(displayName);
