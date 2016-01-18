@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,10 +22,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-
 import com.wingtech.musicplayer.Constant;
-import com.wingtech.musicplayer.ControlPlayerReceiver;
-import com.wingtech.musicplayer.MusicPlayer;
+import com.wingtech.musicplayer.MusicPlayerService;
 import com.wingtech.musicsource.MediaUtil;
 import com.wingtech.musicsource.MusicInfo;
 
@@ -39,8 +40,10 @@ public class MainActivity extends Activity {
 	private List<HashMap<String, Object>> mhashMapMusicInfos= new ArrayList<HashMap<String, Object>>(); ;
 	private SimpleAdapter msimAdapter;
 	private ListView mlistview_music;
-	private Bundle mBundle=new Bundle();
-	private ControlPlayerReceiver mPlayerReceiver=new ControlPlayerReceiver();
+	//private Bundle mBundle=new Bundle();
+	private int mmusicplay_status=Constant.PAUSESTATUS;
+	private int mold_position=-1;
+	private UpdateMainActivityReceiver mupdateReceiver=new UpdateMainActivityReceiver();
 	//private String[] data={"1","2","3","4","5","6","7","8","9","10"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +57,41 @@ public class MainActivity extends Activity {
     protected void onStart() {
     	// TODO Auto-generated method stub
     	super.onStart();
+    	SharedPreferences pref=getSharedPreferences("old_position", MODE_PRIVATE);
+    	mold_position=pref.getInt("position", -1);
+    	if(mold_position!=-1){
+    		String mmusicname=mmusicInfos.get(mold_position).getTitle();
+			String mmusicartist=mmusicInfos.get(mold_position).getArtist();
+			mtextview_musicname.setText(mmusicname);
+			mtextview_musicnote.setText(mmusicartist);
+			//开启服务，负责第二个页面无法更新到old_position
+			Intent mstart_service_intent=new Intent(MainActivity.this,MusicPlayerService.class);
+			mstart_service_intent.putExtra("position", mold_position);
+			mold_position=-1;
+			startService(mstart_service_intent);
+			//MainActivity刚显示出来，歌曲不应播放，所以暂停
+			Log.i("mmusicplay_status","UNPAUSESTATUS to PAUSESTATUS");
+			Intent msendbroadcast_service_intent=new Intent(Constant.ACTION_MUSIC_CONTROL);
+			msendbroadcast_service_intent.putExtra("message", Constant.PAUSE);
+			sendBroadcast(msendbroadcast_service_intent);
+			
+    	}
+    	Log.i("onstart","onstart ");
     	IntentFilter intentfilter=new IntentFilter();
-    	intentfilter.addAction(Constant.ACTION_MUSIC_CONTROL);
-    	this.registerReceiver(mPlayerReceiver, intentfilter);
+    	intentfilter.addAction(Constant.ACTION_MUSIC_ACTIVITY_UPDATE);
+    	this.registerReceiver(mupdateReceiver,intentfilter);
+    	//再次显示时update界面
+    	
+    	Intent updateActivity_intent=new Intent(Constant.ACTION_MUSIC_CONTROL);
+    	updateActivity_intent.putExtra("updateActivity", Constant.MAINACTIVITY);
+    	sendBroadcast(updateActivity_intent);
     }
     
     @Override
     protected void onStop() {
     	// TODO Auto-generated method stub
     	super.onStop();
-    	this.unregisterReceiver(mPlayerReceiver);
+    	this.unregisterReceiver(mupdateReceiver);
     }
 
     @Override
@@ -93,16 +121,54 @@ public class MainActivity extends Activity {
     private void buttonInit() {
 		
     	mbtn_music_photo.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				Intent mmusic_control_intent=new Intent(MainActivity.this,Music_ControlActivity.class);
-				mmusic_control_intent.putExtras(mBundle);
-				startActivity(mmusic_control_intent);
+				Intent mskip_activity_intent=new Intent(MainActivity.this,Music_ControlActivity.class);
+				//mskip_activity_intent.putExtras(mBundle);
+				startActivity(mskip_activity_intent);
+			}		
+		});
+    	
+    	mbtn_switch.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				if(mmusicplay_status==Constant.UNPAUSESTATUS){
+					Log.i("mmusicplay_status","UNPAUSESTATUS to PAUSESTATUS");
+					Intent msendbroadcast_service_intent=new Intent(Constant.ACTION_MUSIC_CONTROL);
+					msendbroadcast_service_intent.putExtra("message", Constant.PAUSE);
+					sendBroadcast(msendbroadcast_service_intent);
+				}
+				else if(mmusicplay_status==Constant.PAUSESTATUS){
+					Log.i("mmusicplay_status","PAUSESTATUS to UNPAUSESTATUS");
+					Intent msendbroadcast_service_intent=new Intent(Constant.ACTION_MUSIC_CONTROL);
+					msendbroadcast_service_intent.putExtra("message", Constant.UNPAUSE);
+					sendBroadcast(msendbroadcast_service_intent);
+			   }
 			}
 		});
     	
+    	
+    	mbtn_previous.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent msendbroadcast_service_intent=new Intent(Constant.ACTION_MUSIC_CONTROL);
+				msendbroadcast_service_intent.putExtra("message", Constant.PREVIOUS);
+				sendBroadcast(msendbroadcast_service_intent);
+			}	
+    	});
+    	
+    	mbtn_next.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent msendbroadcast_service_intent=new Intent(Constant.ACTION_MUSIC_CONTROL);
+				msendbroadcast_service_intent.putExtra("message", Constant.NEXT);
+				sendBroadcast(msendbroadcast_service_intent);
+			}	
+    	});
     	
     		
     }
@@ -127,17 +193,52 @@ public class MainActivity extends Activity {
     			long id) {
     		// TODO Auto-generated method stub
     		 HashMap<String, Object> map=(HashMap<String, Object>)mlistview_music.getItemAtPosition(position);
-    		 mtextview_musicname.setText(map.get("title").toString());
-    		 mtextview_musicnote.setText(map.get("Artist").toString());
     		//mBundle.putSerializable("map", map);
-    		 Intent mstart_service_intent=new Intent(MainActivity.this,MusicPlayer.class);
+    		 Intent mstart_service_intent=new Intent(MainActivity.this,MusicPlayerService.class);
     		// mstart_service_intent.putExtras(mBundle);
+    		 mstart_service_intent.putExtra("message",Constant.PLAY);
     		 mstart_service_intent.putExtra("position", position);
     		 Log.i("list position",position+"");
-    		 startService(mstart_service_intent);
     		 Log.i("list","setOnItemClickListener()");
+    		 startService(mstart_service_intent);
     	 	} 
 		  });
     }
+	
+	public class UpdateMainActivityReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			int position=intent.getIntExtra("position", -1);
+			int status=intent.getIntExtra("status",-1);
+			int moldposition=intent.getIntExtra("old_position",-1);
+			
+			if(position!=-1){
+				String mmusicname=mmusicInfos.get(position).getTitle();
+				String mmusicartist=mmusicInfos.get(position).getArtist();
+				mtextview_musicname.setText(mmusicname);
+				mtextview_musicnote.setText(mmusicartist);	
+			}
+			
+			if(status!=-1){
+				mmusicplay_status=status;
+				Log.i("status","mmusicplay_status change!"+mmusicplay_status);
+				if(mmusicplay_status==Constant.PAUSESTATUS){
+					mbtn_switch.setBackgroundResource(R.drawable.switch_off);	
+				}
+				else if(mmusicplay_status==Constant.UNPAUSESTATUS){
+					mbtn_switch.setBackgroundResource(R.drawable.switch_on);	
+				}
+			}
+			
+			if(moldposition!=-1){
+				mold_position=moldposition;
+			}
+			
+		}
+		
+	}
+	
     
 }

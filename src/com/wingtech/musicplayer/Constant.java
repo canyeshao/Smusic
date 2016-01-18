@@ -3,15 +3,19 @@ package com.wingtech.musicplayer;
 
 public class Constant {
 	//操作
-	public final static int play = 1;
-	public final static int pause = 2;
-	public final static int stop = 3;
-	public final static int next = 4;
-	public final static int back = 5;
+	public final static int PLAY = 1;
+	public final static int PAUSE = 2;
+	public final static int UNPAUSE = 3;
+	public final static int PREVIOUS = 4;
+	public final static int NEXT = 5;
 
 	//状态
-	public final static int playstatus = 6;
-	public final static int pausestatus = 7;
+	public final static int UNPAUSESTATUS = 6;
+	public final static int PAUSESTATUS = 7;
+	
+	//两个Activity
+	public final static int MAINACTIVITY=8;
+	public final static int MUSICCONTROLACTIVITY=9;
 	
 	//构建intent的不同变量
 	public final static String ACTION_MUSIC_CONTROL = "action_music_control";

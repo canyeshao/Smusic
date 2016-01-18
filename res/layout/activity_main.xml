@@ -143,7 +143,7 @@
    			android:layout_height="42dp"
    			android:contentDescription="@string/description"
    			android:layout_centerVertical="true"
-   			android:background="@drawable/switch_on"
+   			android:background="@drawable/switch_off"
    			android:layout_centerInParent="true">
 			</ImageButton>
 			
