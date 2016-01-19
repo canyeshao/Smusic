@@ -111,6 +111,7 @@ public class MusicPlayerService extends Service{
 			Log.i("status","UNPAUSESTATUS");
 			mmediaPlayer.reset();// 把各项参数恢复到初始状态
 			mmediaPlayer.setDataSource(path);
+			Log.i("music control","paht"+path);
 			mmediaPlayer.prepareAsync(); // 进行缓冲
 			mmediaPlayer.setOnPreparedListener(new PreparedListener(currentTime));// 注册一个监听器
 		} catch (Exception e) {

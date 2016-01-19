@@ -27,7 +27,7 @@ public class MediaUtil {
 					.getColumnIndex(MediaStore.Audio.Media._ID));	//音乐id
 			String title = cursor.getString((cursor	
 					.getColumnIndex(MediaStore.Audio.Media.TITLE))); // 音乐标题
-			if(temp_title.equals(title))
+		/*	if(temp_title.equals(title))
 			{
 				continue;
 			}
@@ -35,6 +35,7 @@ public class MediaUtil {
 			{
 				temp_title=title;
 			}
+		*/
 			String artist = cursor.getString(cursor
 					.getColumnIndex(MediaStore.Audio.Media.ARTIST)); // 艺术家
 			String album = cursor.getString(cursor
@@ -44,6 +45,9 @@ public class MediaUtil {
 			long albumId = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
 			long duration = cursor.getLong(cursor
 					.getColumnIndex(MediaStore.Audio.Media.DURATION)); // 时长
+			if(duration<100000){
+				continue;
+			}
 			long size = cursor.getLong(cursor
 					.getColumnIndex(MediaStore.Audio.Media.SIZE)); // 文件大小
 			String url = cursor.getString(cursor
@@ -60,6 +64,7 @@ public class MediaUtil {
 				musicInfo.setDisplayName(displayName);
 				musicInfo.setAlbumId(albumId);
 				musicInfo.setDuration(duration);
+				//Log.i("duration",duration+"");
 				musicInfo.setSize(size);
 				musicInfo.setUrl(url);
 				musicInfos.add(musicInfo);
