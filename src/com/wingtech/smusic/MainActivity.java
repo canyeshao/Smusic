@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 	private ListView mlistview_music;
 	//private Bundle mBundle=new Bundle();
 	private int mmusicplay_status=Constant.PAUSESTATUS;
-	private int mold_position=-1;
+	private int mold_position=-2;		//-２代表程序安装后第一次打开
 	private UpdateMainActivityReceiver mupdateReceiver=new UpdateMainActivityReceiver();
 	//private String[] data={"1","2","3","4","5","6","7","8","9","10"};
     @Override
@@ -57,25 +57,6 @@ public class MainActivity extends Activity {
     protected void onStart() {
     	// TODO Auto-generated method stub
     	super.onStart();
-    	SharedPreferences pref=getSharedPreferences("old_position", MODE_PRIVATE);
-    	mold_position=pref.getInt("position", -1);
-    	if(mold_position!=-1){
-    		String mmusicname=mmusicInfos.get(mold_position).getTitle();
-			String mmusicartist=mmusicInfos.get(mold_position).getArtist();
-			mtextview_musicname.setText(mmusicname);
-			mtextview_musicnote.setText(mmusicartist);
-			//开启服务，负责第二个页面无法更新到old_position
-			Intent mstart_service_intent=new Intent(MainActivity.this,MusicPlayerService.class);
-			mstart_service_intent.putExtra("position", mold_position);
-			mold_position=-1;
-			startService(mstart_service_intent);
-			//MainActivity刚显示出来，歌曲不应播放，所以暂停
-			Log.i("mmusicplay_status","UNPAUSESTATUS to PAUSESTATUS");
-			Intent msendbroadcast_service_intent=new Intent(Constant.ACTION_MUSIC_CONTROL);
-			msendbroadcast_service_intent.putExtra("message", Constant.PAUSE);
-			sendBroadcast(msendbroadcast_service_intent);
-			
-    	}
     	Log.i("onstart","onstart ");
     	IntentFilter intentfilter=new IntentFilter();
     	intentfilter.addAction(Constant.ACTION_MUSIC_ACTIVITY_UPDATE);
@@ -114,6 +95,7 @@ public class MainActivity extends Activity {
     	mlistview_music=(ListView)findViewById(R.id.listview_music);
     	listInit();
     	buttonInit();
+    	//old_position_init();
     	Log.i("init","init over");
     };
      
@@ -196,14 +178,53 @@ public class MainActivity extends Activity {
     		//mBundle.putSerializable("map", map);
     		 Intent mstart_service_intent=new Intent(MainActivity.this,MusicPlayerService.class);
     		// mstart_service_intent.putExtras(mBundle);
-    		 mstart_service_intent.putExtra("message",Constant.PLAY);
+    		 //mstart_service_intent.putExtra("message",Constant.PLAY);
     		 mstart_service_intent.putExtra("position", position);
+    		 mstart_service_intent.putExtra("message", 1);
     		 Log.i("list position",position+"");
     		 Log.i("list","setOnItemClickListener()");
     		 startService(mstart_service_intent);
     	 	} 
 		  });
     }
+	
+	public void old_position_init() {
+		if (mold_position == -2) {
+			mold_position = 0;
+		} else {
+			SharedPreferences pref = getSharedPreferences("old_position",
+					MODE_PRIVATE);
+			mold_position = pref.getInt("position", -1);
+			
+		}
+		if (mold_position != -1) {
+
+			Log.i("onCreate", "mold_position=" + mold_position);
+			mmusicInfos = MediaUtil.getMusicInfos(MainActivity.this);
+			String mmusicname = mmusicInfos.get(mold_position).getTitle();
+			String mmusicartist = mmusicInfos.get(mold_position).getArtist();
+			mtextview_musicname.setText(mmusicname);
+			mtextview_musicnote.setText(mmusicartist);
+			// 开启服务，负责第二个页面无法更新到old_position
+			Intent mstart_service_intent = new Intent(MainActivity.this,
+					MusicPlayerService.class);
+			mstart_service_intent.putExtra("position", mold_position);
+			mstart_service_intent.putExtra("message", 0);
+			mold_position = -1;
+			startService(mstart_service_intent);
+			
+		} else {
+			Log.e("SharedPreferences","SharedPreferences read error!");
+		}
+
+		// MainActivity刚显示出来，歌曲不应播放，所以暂停
+		Log.i("mmusicplay_status", "UNPAUSESTATUS to PAUSESTATUS");
+		Intent msendbroadcast_service_intent = new Intent(
+				Constant.ACTION_MUSIC_CONTROL);
+		msendbroadcast_service_intent.putExtra("message", Constant.PAUSE);
+		sendBroadcast(msendbroadcast_service_intent);
+
+	}
 	
 	public class UpdateMainActivityReceiver extends BroadcastReceiver{
 
@@ -212,8 +233,7 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 			int position=intent.getIntExtra("position", -1);
 			int status=intent.getIntExtra("status",-1);
-			int moldposition=intent.getIntExtra("old_position",-1);
-			
+
 			if(position!=-1){
 				String mmusicname=mmusicInfos.get(position).getTitle();
 				String mmusicartist=mmusicInfos.get(position).getArtist();
@@ -231,11 +251,7 @@ public class MainActivity extends Activity {
 					mbtn_switch.setBackgroundResource(R.drawable.switch_on);	
 				}
 			}
-			
-			if(moldposition!=-1){
-				mold_position=moldposition;
-			}
-			
+
 		}
 		
 	}

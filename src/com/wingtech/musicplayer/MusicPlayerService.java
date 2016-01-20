@@ -94,9 +94,18 @@ public class MusicPlayerService extends Service{
 		// TODO Auto-generated method stub
 		int t=super.onStartCommand(intent, flags, startId);
 		Log.i("service", "service onStartCommand play");
-		position=intent.getIntExtra("position", 4);
+		int temp=intent.getIntExtra("message", -1);
+		position=intent.getIntExtra("position", 0);
 		path = mmusicInfos.get(position).getUrl();
-		play(0);
+		if(temp==1){
+			play(0);
+			Log.i("onStartCommand","onitemclick");
+		}
+		if(temp==0){
+			play(0);
+			pause();
+			Log.i("onStartCommand","old_position stop");
+		}
 		return t;
 	}
 
@@ -112,7 +121,7 @@ public class MusicPlayerService extends Service{
 			mmediaPlayer.reset();// 把各项参数恢复到初始状态
 			mmediaPlayer.setDataSource(path);
 			Log.i("music control","paht"+path);
-			mmediaPlayer.prepareAsync(); // 进行缓冲
+			mmediaPlayer.prepare(); // 进行缓冲
 			mmediaPlayer.setOnPreparedListener(new PreparedListener(currentTime));// 注册一个监听器
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -215,7 +224,6 @@ public class MusicPlayerService extends Service{
 					next();
 					break;
 				default:
-					Log.i("service","onStartCommand Intent error");
 					break;
 			}	
 			
