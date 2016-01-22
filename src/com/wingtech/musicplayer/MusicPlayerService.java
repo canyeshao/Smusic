@@ -123,6 +123,11 @@ public class MusicPlayerService extends Service{
 			Log.i("music control","paht"+path);
 			mmediaPlayer.prepare(); // 进行缓冲
 			mmediaPlayer.setOnPreparedListener(new PreparedListener(currentTime));// 注册一个监听器
+		
+			SharedPreferences.Editor editor=getSharedPreferences("old_position", MODE_PRIVATE).edit();
+			editor.putInt("position", position);
+			editor.commit();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -161,6 +166,7 @@ public class MusicPlayerService extends Service{
 		updateMainActivityIntent.putExtra("status", mmusicplay_status);
 		sendBroadcast(updateMainActivityIntent);
 		play(0);
+		
 	}
 	
 	public void next(){
@@ -174,6 +180,7 @@ public class MusicPlayerService extends Service{
 		updateMainActivityIntent.putExtra("status", mmusicplay_status);
 		sendBroadcast(updateMainActivityIntent);
 		play(0);
+		
 	}
 	
 	@Override
@@ -184,10 +191,6 @@ public class MusicPlayerService extends Service{
 		mmediaPlayer.release();
 		this.unregisterReceiver(mPlayerReceiver);
 		Log.i("destroy","mmediaPlayer release");
-		SharedPreferences.Editor editor=getSharedPreferences("old_position", MODE_PRIVATE).edit();
-		editor.putInt("position", position);
-		editor.commit();
-		Log.i("destroy","old_position save");
 	}
 	
 	

@@ -160,11 +160,11 @@ public class Music_ControlActivity extends Activity implements OnClickListener  
 				Log.i("status","mmusicplay_status change!"+mmusicplay_status);
 				if(mmusicplay_status==Constant.PAUSESTATUS){
 					Log.i("status","mmusicplay_status change!   I>"+mmusicplay_status);
-					mibtn_control_switch.setBackgroundResource(R.drawable.music_control_playon);	
+					mibtn_control_switch.setBackgroundResource(R.drawable.music_control_playpause);	
 				}
 				else if(mmusicplay_status==Constant.UNPAUSESTATUS){
 					Log.i("status","mmusicplay_status change!   II"+mmusicplay_status);
-					mibtn_control_switch.setBackgroundResource(R.drawable.music_control_playpause);	
+					mibtn_control_switch.setBackgroundResource(R.drawable.music_control_playon);	
 				}
 			}
 
